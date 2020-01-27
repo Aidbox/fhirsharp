@@ -12,25 +12,24 @@ using Aidbox.RestClient.Models;
 
 namespace TestConsoleApp
 {
-    class ProgramTest
+    class SampleApp
     {
         private static HttpClient httpClient = new HttpClient();
 
         public static void Main(string[] args)
         {
-            m1();
+            testRun();
         }
 
-        private static void m1()
+        private static void testRun()
         {
-            /*
             var client = new AidboxRestClient(new AidboxRestClientSettings
             {
                 BaseUrl = "http://{address}:{port}/",
                 IsWithoutAuthentication = false,
                 AuthenticationSettings = new AidboxAuthenticationSettings
                 {
-                    GrantType = "",
+                    GrantType = "password",
                     ClientId = "",
                     ClientSecret = "",
                     Username = "",
@@ -38,9 +37,9 @@ namespace TestConsoleApp
                 }
             });
 
+            /*
             var newPatient = new Aidbox.Model.Patient
             {
-                inn = "Test rest client",
                 birthDate = new DateTime(1990, 4, 13)
             };
             var id = client.CreateResource(newPatient);
