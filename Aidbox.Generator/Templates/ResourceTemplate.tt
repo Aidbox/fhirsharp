@@ -1,0 +1,66 @@
+﻿<#@ template language="C#" debug="true" hostSpecific="true" #>
+<#@ output extension=".cs" #>
+
+<#@ import namespace="System" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Xml.Linq" #>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Runtime" #>
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
+using Aidbox.Generator;
+
+namespace Aidbox.Model
+{
+    public partial class <#= type.EntityName #> : BaseClass
+    {
+        <# foreach (AttributeDescription ad in type.Attributes.Where(a => a.BackboneDescription == null)) { #>
+        [JsonPropertyAttribute("<#= ad.Path[0] #>")]
+        <#= ad.IsDate() ? "[JsonConverter(typeof(CustomDateTimeConverter))]" : "" #>
+        public <#= ad.GetDotNetCollectionType() #> <#= ad.Name() #>
+        {
+            <#if (ad.IsCollection){#>get { if(_<#= ad.Name() #>==null) _<#= ad.Name() #> = new <#= ad.GetDotNetCollectionType() #>(); return _<#= ad.Name() #>; }
+            <#}else{#>get { return _<#= ad.Name() #>; }
+            <#}#>set { _<#= ad.Name() #> = value; }
+        }
+        
+        private <#= ad.GetDotNetCollectionType() #> _<#= ad.Name() #>;
+
+        <# } #>
+        <# foreach (AttributeDescription ad in type.Attributes.Where(a => a.BackboneDescription != null)) { #>
+        [JsonPropertyAttribute("<#= ad.Path[0] #>")]
+        public <#= ad.GetDotNetCollectionType() #> <#= ad.Name() #>
+        {
+            <#if (ad.IsCollection){#>get { if(_<#= ad.Name() #>==null) _<#= ad.Name() #> = new <#= ad.GetDotNetCollectionType() #>(); return _<#= ad.Name() #>; }
+            <#}else{#>get { return _<#= ad.Name() #>; }
+            <#}#>set { _<#= ad.Name() #> = value; }
+        }
+        
+        private <#= ad.GetDotNetCollectionType() #> _<#= ad.Name() #>;
+
+        public class <#= ad.GetDotNetType() #>
+        {
+            <#foreach (AttributeDescription beAd in ad.BackboneDescription){#>
+            [JsonPropertyAttribute("<#= beAd.Path[0] #>")]
+            <#= beAd.IsDate() ? "[JsonConverter(typeof(CustomDateTimeConverter))]" : "" #>
+            public <#= beAd.GetDotNetCollectionType() #> <#= beAd.Name() #>
+            {
+                <#if (beAd.IsCollection){#>get { if(_<#= beAd.Name() #>==null) _<#= beAd.Name() #> = new <#= beAd.GetDotNetCollectionType() #>(); return _<#= beAd.Name() #>; }
+                <#}else{#>get { return _<#= beAd.Name() #>; }
+                <#}#>set { _<#= beAd.Name() #> = value; }
+            }
+        
+            private <#= beAd.GetDotNetCollectionType() #> _<#= beAd.Name() #>;
+        
+            <# } #>     
+        }
+        <# } #>   
+    }
+}
